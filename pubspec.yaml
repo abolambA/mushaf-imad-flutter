@@ -12,10 +12,12 @@ dependencies:
   audio_service: ^0.18.18
   flutter:
     sdk: flutter
+  flutter_dotenv: ^6.0.0
   flutter_svg: ^2.2.3
   get_it: ^8.0.3
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  http: ^1.6.0
   just_audio: ^0.10.5
 
 dev_dependencies:
@@ -633,6 +635,8 @@ flutter:
     - assets/quran-images/602/
     - assets/quran-images/603/
     - assets/quran-images/604/
+    - .env
+
 
   fonts:
     - family: QuranNumbers

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:imad_flutter/imad_flutter.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
   await setupMushafWithHive();
 
   // Initialize MushafLibrary with actual DAO instances

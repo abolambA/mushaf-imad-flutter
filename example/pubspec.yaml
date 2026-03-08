@@ -12,6 +12,7 @@ dependencies:
   imad_flutter:
     path: ../
   get_it: ^8.0.3
+  flutter_dotenv: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -20,3 +21,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - .env
