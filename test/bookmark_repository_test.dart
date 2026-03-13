@@ -1,16 +1,37 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:imad_flutter/imad_flutter.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'dart:io';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-      .setMockMethodCallHandler(
-        const MethodChannel('plugins.flutter.io/path_provider'),
-        (MethodCall methodCall) async => Directory.systemTemp.path,
-      );
+  setUpAll(() {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+
+    // Mock path_provider
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+          const MethodChannel('plugins.flutter.io/path_provider'),
+          (MethodCall methodCall) async => Directory.systemTemp.path,
+        );
+
+    // Mock audio_service
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+          const MethodChannel('com.ryanheise.audio_service.client.methods'),
+          (MethodCall methodCall) async => null,
+        );
+
+    // Mock audio_service handler
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+          const MethodChannel('com.ryanheise.audio_service.handler.methods'),
+          (MethodCall methodCall) async => null,
+        );
+  });
 
   late BookmarkRepository repository;
 
