@@ -3,13 +3,13 @@ import 'package:imad_flutter/imad_flutter.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:imad_flutter/src/data/remote/alketab_api_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
+  AlKetabApiService.configure(dotenv.env['ALKETAB_API_KEY'] ?? '');
   await setupMushafWithHive();
-
-  // Initialize MushafLibrary with actual DAO instances
   await MushafLibrary.initialize(
     databaseService: mushafGetIt<DatabaseService>(),
     bookmarkDao: mushafGetIt<BookmarkDao>(),

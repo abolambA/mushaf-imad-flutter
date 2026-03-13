@@ -1,6 +1,15 @@
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+
+String _stripHtml(String html) {
+  return html
+      .replaceAll(RegExp(r'<[^>]*>'), '')
+      .replaceAll('&amp;', '&')
+      .replaceAll('&lt;', '<')
+      .replaceAll('&gt;', '>')
+      .replaceAll('&nbsp;', ' ')
+      .trim();
+}
 
 class AlKetabResult {
   final int verseID;
@@ -29,7 +38,7 @@ class AlKetabResult {
       chapterNumber: identifier['sura_id'] as int? ?? 0,
       verseNumber: identifier['aya_id'] as int? ?? 0,
       pageNumber: position['page'] as int? ?? 0,
-      text: aya['text'] as String? ?? '',
+      text: _stripHtml(aya['text'] as String? ?? ''),
       explanation: null,
     );
   }
@@ -38,7 +47,11 @@ class AlKetabResult {
 class AlKetabApiService {
   static const String _baseUrl = 'https://alketab-api.web.app/api/search';
 
-  static String get _apiKey => dotenv.env['ALKETAB_API_KEY'] ?? '';
+  static String _apiKey = '';
+
+  static void configure(String apiKey) {
+    _apiKey = apiKey;
+  }
 
   static Future<AlKetabSearchResponse> search(String message) async {
     final uri = Uri.parse('$_baseUrl?message=${Uri.encodeComponent(message)}');
