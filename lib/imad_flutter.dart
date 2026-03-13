@@ -109,3 +109,5 @@ export 'src/data/local/hive_database_service.dart';
 export 'src/data/local/dao/hive/hive_bookmark_dao.dart';
 export 'src/data/local/dao/hive/hive_reading_history_dao.dart';
 export 'src/data/local/dao/hive/hive_search_history_dao.dart';
+// Remote API
+export 'src/data/remote/alketab_api_service.dart';
