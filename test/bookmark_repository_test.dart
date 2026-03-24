@@ -1,42 +1,46 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:imad_flutter/imad_flutter.dart';
+import 'package:imad_flutter/src/data/audio/flutter_audio_player.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'dart:io';
+
+// Fake audio player so AudioService.init is never called in tests
+class _FakeFlutterAudioPlayer implements FlutterAudioPlayer {
+  @override
+  Stream<AudioPlayerState> get domainStateStream => const Stream.empty();
+
+  @override
+  Future<void> loadFromUrl(
+    String url, {
+    int chapterNumber = 0,
+    ReciterInfo? reciter,
+    bool autoPlay = false,
+  }) async {}
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  setUpAll(() {
+  late BookmarkRepository repository;
+
+  setUpAll(() async {
+    // 1. Initialize sqflite FFI (must happen before any sqflite usage)
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
 
-    // Mock path_provider
+    // 2. Mock path_provider (used by Hive.initFlutter)
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
           const MethodChannel('plugins.flutter.io/path_provider'),
           (MethodCall methodCall) async => Directory.systemTemp.path,
         );
 
-    // Mock audio_service
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(
-          const MethodChannel('com.ryanheise.audio_service.client.methods'),
-          (MethodCall methodCall) async => null,
-        );
-
-    // Mock audio_service handler
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(
-          const MethodChannel('com.ryanheise.audio_service.handler.methods'),
-          (MethodCall methodCall) async => null,
-        );
-  });
-
-  late BookmarkRepository repository;
-
-  setUpAll(() async {
-    await setupMushafWithHive();
+    // 3. Initialize the library using the fake audio player (skips AudioService.init)
+    await setupMushafWithHive(audioPlayer: _FakeFlutterAudioPlayer());
     await MushafLibrary.initialize(
       databaseService: mushafGetIt<DatabaseService>(),
       bookmarkDao: mushafGetIt<BookmarkDao>(),
