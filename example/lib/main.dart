@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:imad_flutter/imad_flutter.dart';
 // ignore: depend_on_referenced_packages
+import 'package:flutter/material.dart';
+import 'package:imad_flutter/imad_flutter.dart';
+// ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  const apiKey = String.fromEnvironment('ALKETAB_API_KEY');
+  AlKetabApiService.configure(apiKey);
+  await setupMushafWithHive();
 
   // Define CMS configuration pointing to the Itqan API
   const cmsConfig = CmsAudioConfig(
