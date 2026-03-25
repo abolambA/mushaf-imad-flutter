@@ -14,6 +14,8 @@ class MushafPageView extends StatefulWidget {
   final ReadingTheme readingTheme;
   final Color? audioHighlightsColor;
 
+  final void Function(PageVerseData verse)? onSelectVerse;
+
   const MushafPageView({
     super.key,
     this.initialPage,
@@ -24,6 +26,7 @@ class MushafPageView extends StatefulWidget {
     this.onOpenChapterIndex,
     this.readingTheme = ReadingTheme.light,
     this.audioHighlightsColor,
+    this.onSelectVerse,
   });
 
   @override
@@ -235,8 +238,8 @@ class MushafPageViewState extends State<MushafPageView> {
                         // case where a verse starts on the previous page.
                         audioVerseKey: _currentAudioVerseKey,
                         audioHighlightsColor: widget.audioHighlightsColor,
-                        onVerseTap: (chapter, verse) {
-                          final key = chapter * 1000 + verse;
+                        onVerseTap: (verse) {
+                          final key = verse.chapter * 1000 + verse.number;
                           setState(() {
                             // Toggle selection
                             _selectedVerseKey = _selectedVerseKey == key
@@ -246,13 +249,14 @@ class MushafPageViewState extends State<MushafPageView> {
                             // Track which verse was tapped for AudioPlayerBar.
                             // If user de-selects, clear so page-level context is used.
                             if (_selectedVerseKey != null) {
-                              _tappedVerseNumber = verse;
-                              _tappedChapterNumber = chapter;
+                              _tappedVerseNumber = verse.verseID;
+                              _tappedChapterNumber = verse.chapter;
                             } else {
                               _tappedVerseNumber = null;
                               _tappedChapterNumber = null;
                             }
                           });
+                          widget.onSelectVerse?.call(verse);
                         },
                       );
                     },
