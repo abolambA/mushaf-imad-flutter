@@ -67,6 +67,7 @@ Future<void> setupMushafDependencies({
   required SearchHistoryDao searchHistoryDao,
   MushafLogger? logger,
   CmsAudioConfig? cmsAudioConfig,
+
   /// Provide a pre-built [FlutterAudioPlayer] to skip [AudioService.init].
   /// Useful in tests where native platform channels are unavailable.
   FlutterAudioPlayer? audioPlayer,
@@ -140,7 +141,8 @@ Future<void> setupMushafDependencies({
   );
 
   // Initialize AudioService for background playback
-  final resolvedPlayer = audioPlayer ??
+  final resolvedPlayer =
+      audioPlayer ??
       await AudioService.init<FlutterAudioPlayer>(
         builder: () => FlutterAudioPlayer(),
         config: const AudioServiceConfig(
